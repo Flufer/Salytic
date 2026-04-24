@@ -56,6 +56,11 @@ def get_user_usage(user_id):
     return data.get(user_id, {"count": 0})
 
 
+def is_user_paid(user_id):
+    data = load_usage()
+    return data.get(user_id, {}).get("is_paid", False)
+
+
 def increment_usage(user_id):
     data = load_usage()
 
@@ -340,8 +345,15 @@ if st.sidebar.checkbox("Admin stats"):
 ### 📊 System stats
 Users: **{stats['users']}**  
 Total runs: **{stats['total_runs']}**  
-Active today: **{stats['active_today']}**
+Active today: **{stats['active_today']}
 """)
+
+# 🔓 DEV: simulate payment (ВОТ СЮДА)
+if st.sidebar.button("🔓 Simulate payment (dev)"):
+    data = load_usage()
+    data[user_id]["is_paid"] = True
+    save_usage(data)
+    st.sidebar.success("User marked as paid")
 
 # ── BLOCK ACCESS  ─────────
 is_paid = usage.get("is_paid", False)
