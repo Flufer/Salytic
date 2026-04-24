@@ -1,3 +1,7 @@
+import json
+import os
+from datetime import datetime
+import hashlib
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -13,7 +17,30 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ── CSS ──────────────────────────────────────────────────────────────────────
+USAGE_FILE = "usage_log.json"
+
+def get_user_id():
+    ip = st.context.headers.get("X-Forwarded-For", "local")
+    session = st.runtime.scriptrunner.get_script_run_ctx().session_id
+    raw = f"{ip}-{session}"
+    return hashlib.md5(raw.encode()).hexdigest()
+
+def load_usage():
+    if os.path.exists(USAGE_FILE):
+        with open(USAGE_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_usage(data):
+    with open(USAGE_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+def get_user_usage(user_id):
+    data = load_usage()
+    return data.get(user_id, {"count": 0})
+
+
+# CSS
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Inter:wght@300;400;500&display=swap');
