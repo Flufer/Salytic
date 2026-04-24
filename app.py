@@ -26,31 +26,48 @@ def get_user_id():
     raw = f"{ip}-{session}"
     return hashlib.md5(raw.encode()).hexdigest()
 
+
 def load_usage():
     if os.path.exists(USAGE_FILE):
         with open(USAGE_FILE, "r") as f:
             return json.load(f)
     return {}
 
+
 def save_usage(data):
     with open(USAGE_FILE, "w") as f:
         json.dump(data, f, indent=2)
+
 
 def get_user_usage(user_id):
     data = load_usage()
     return data.get(user_id, {"count": 0})
 
+
 def increment_usage(user_id):
     data = load_usage()
 
     if user_id not in data:
-        data[user_id] = {"count": 0, "last_used": None}
+        data[user_id] = {
+            "count": 0,
+            "last_used": None,
+            "total_runs": 0
+        }
 
     data[user_id]["count"] += 1
     data[user_id]["last_used"] = datetime.now().isoformat()
+    data[user_id]["total_runs"] = data[user_id].get("total_runs", 0) + 1
 
     save_usage(data)
 
+
+def get_usage_stats():
+    data = load_usage()
+
+    return {
+        "users": len(data),
+        "total_runs": sum(u.get("total_runs", 0) for u in data.values())
+    }
 
 # CSS
 st.markdown("""
@@ -263,6 +280,7 @@ usage = get_user_usage(user_id)
 
 remaining = max(FREE_LIMIT - usage["count"], 0)
 
+# ── SIDEBAR UI ─────────────────────────────
 st.sidebar.markdown(f"""
 ### 📊 Usage
 **{usage['count']} / {FREE_LIMIT}**
@@ -270,6 +288,16 @@ st.sidebar.markdown(f"""
 Осталось запусков: **{remaining}**
 """)
 
+if st.sidebar.checkbox("Admin stats"):
+    stats = get_usage_stats()
+
+    st.sidebar.markdown(f"""
+### 📊 System stats
+Users: **{stats['users']}**  
+Total runs: **{stats['total_runs']}**
+""")
+
+# ── BLOCK ACCESS (ВАЖНО: В КОНЦЕ) ─────────
 if usage["count"] >= FREE_LIMIT:
     st.error("❌ Бесплатный лимит исчерпан. Обратись к автору для доступа.")
     st.stop()
