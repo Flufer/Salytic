@@ -18,6 +18,7 @@ st.set_page_config(
 )
 
 USAGE_FILE = "usage_log.json"
+FREE_LIMIT = 3
 
 def get_user_id():
     ip = st.context.headers.get("X-Forwarded-For", "local")
@@ -246,6 +247,15 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+user_id = get_user_id()
+usage = get_user_usage(user_id)
+
+st.sidebar.info(f"Использования: {usage['count']} / {FREE_LIMIT}")
+
+if usage["count"] >= FREE_LIMIT:
+    st.error("❌ Бесплатный лимит исчерпан. Обратись к автору для доступа.")
+    st.stop()
+    
 # ── UPLOAD ────────────────────────────────────────────────────────────────────
 col_l, col_c, col_r = st.columns([1, 2, 1])
 with col_c:
