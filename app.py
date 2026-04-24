@@ -78,7 +78,12 @@ def get_usage_stats():
 
     return {
         "users": len(data),
-        "total_runs": sum(u.get("total_runs", 0) for u in data.values())
+        "total_runs": sum(u.get("total_runs", 0) for u in data.values()),
+        "active_today": len([
+            u for u in data.values()
+            if u.get("last_used") and
+            (datetime.fromisoformat(u["last_used"]).date() == datetime.now().date())
+        ])
     }
 
 
@@ -317,7 +322,8 @@ if st.sidebar.checkbox("Admin stats"):
     st.sidebar.markdown(f"""
 ### 📊 System stats
 Users: **{stats['users']}**  
-Total runs: **{stats['total_runs']}**
+Total runs: **{stats['total_runs']}**  
+Active today: **{stats['active_today']}**
 """)
 
 # ── BLOCK ACCESS  ─────────
