@@ -20,6 +20,17 @@ st.set_page_config(
 USAGE_FILE = "usage_log.json"
 FREE_LIMIT = 3
 
+PAYWALL_MESSAGE = """
+🚀 Salytic Pro
+
+Получите:
+- Неограниченные анализы
+- Расширенные AI инсайты
+- Приоритетную поддержку
+
+Свяжитесь с автором для доступа.
+"""
+
 def get_user_id():
     ip = st.context.headers.get("X-Forwarded-For", "local")
     session = st.runtime.scriptrunner.get_script_run_ctx().session_id
@@ -304,14 +315,7 @@ is_paid = usage.get("is_paid", False)
 if not is_paid and usage["count"] >= FREE_LIMIT:
     st.error("❌ Бесплатный лимит исчерпан. Перейдите на Pro-версию для неограниченного доступа.")
 
-    st.markdown("""
-    ### 🚀 Pro доступ
-    - Безлимитный анализ
-    - AI инсайты
-    - Экспорт отчетов
-
-    👉 Напиши автору для подключения
-    """)
+    st.markdown(PAYWALL_MESSAGE)
     st.stop()
 
 # ── UPLOAD ────────────────────────────────────────────────────────────────────
