@@ -50,13 +50,14 @@ def increment_usage(user_id):
     if user_id not in data:
         data[user_id] = {
             "count": 0,
+            "total_runs": 0,
             "last_used": None,
-            "total_runs": 0
+            "is_paid": False
         }
 
     data[user_id]["count"] += 1
-    data[user_id]["last_used"] = datetime.now().isoformat()
     data[user_id]["total_runs"] = data[user_id].get("total_runs", 0) + 1
+    data[user_id]["last_used"] = datetime.now().isoformat()
 
     save_usage(data)
 
