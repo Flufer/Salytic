@@ -1,57 +1,76 @@
 # Salytic 📊
 
-> AI-анализ продаж для малого бизнеса. Загрузи CSV — получи инсайты за 30 секунд.
+> AI-анализ продаж для малого бизнеса. Загрузи CSV — получи инсайты и готовый отчёт за 30 секунд.
 
 ![Python](https://img.shields.io/badge/python-3.11+-blue?style=flat-square)
 ![Streamlit](https://img.shields.io/badge/streamlit-1.32+-red?style=flat-square)
-![Gemini](https://img.shields.io/badge/gemini-1.5_flash-orange?style=flat-square)
+![Gemini](https://img.shields.io/badge/gemini-2.5_flash-orange?style=flat-square)
+![Stripe](https://img.shields.io/badge/payments-stripe-purple?style=flat-square)
 
 ---
 
-## Демо 
+## 🚀 Демо
 
 ![Главный экран](screenshots/screenshot_main.png)
 ![AI-рекомендации](screenshots/screenshot_insights.png)
 
-**Как выглядит:** загрузка CSV → KPI-карточки (выручка, средний чек, количество транзакций) → графики динамики и топ товаров → AI-рекомендации на русском → скачиваемый HTML-отчёт.
+**Как выглядит:** загрузка CSV → KPI-карточки → графики динамики и товаров → AI-рекомендации → HTML-отчёт → платный доступ без ограничений.
 
 ---
 
-## Что умеет
+## ✨ Что умеет
 
-- Автоопределение колонок (дата, товар, количество, сумма) — работает с любым CSV
+- Автоопределение колонок (дата, товар, количество, сумма)
+- Работает с большинством CSV без ручной настройки
 - KPI: выручка, средний чек, количество транзакций, уникальные товары
-- Динамика выручки по неделям с трендом
-- Топ и аутсайдеры по выручке
+- Динамика продаж с трендом
+- Топ товары и аутсайдеры
 - ABC-анализ ассортимента
 - Продажи по дням недели
 - AI-рекомендации на русском через Gemini 2.5 Flash
-- Скачиваемый HTML-отчёт
+- Экспорт красивого HTML-отчёта
+- Бесплатный демо-доступ + paywall
+- Stripe Checkout для оплаты доступа
+- Webhook-подтверждение платежей
 
 ---
 
-## Стек
+## 💼 SaaS-механика
 
-| |                  |
-|---|------------------|
-| UI | Streamlit        |
-| Аналитика | pandas, numpy    |
-| Графики | Plotly           |
+- 1 бесплатный демо-запуск
+- После лимита открывается оплата
+- После успешного платежа пользователь получает доступ
+- Учёт пользователей и usage tracking
+
+---
+
+## 🛠️ Стек
+
+| Компонент | Технологии |
+|---|---|
+| UI | Streamlit |
+| Аналитика | pandas, numpy |
+| Графики | Plotly |
 | AI | Gemini 2.5 Flash |
+| Платежи | Stripe |
+| Хранение | JSON storage (MVP) |
 
 ---
 
-## Структура
+## 📁 Структура проекта
 
-```
+```text
 salytic/
-├── app.py          # UI и роутинг
-├── analyzer.py     # аналитика, ABC, тренды
-├── llm.py          # Gemini API, fallback без ключа
-├── report.py       # генерация HTML-отчёта
+├── app.py              # основной интерфейс
+├── analyzer.py         # аналитика продаж
+├── llm.py              # Gemini API + fallback
+├── report.py           # HTML отчёт
+├── payments.py         # Stripe Checkout
+├── webhook_server.py   # webhook обработчик оплаты
+├── storage.py          # users / usage / paid access
 ├── requirements.txt
-├── .env.example    # шаблон переменных окружения
-└── screenshots/           # скрины для README
+├── .env.example
+└── screenshots/
 ```
 
 ---
