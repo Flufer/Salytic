@@ -2,7 +2,6 @@ import json
 import os
 import stripe
 from datetime import datetime
-import hashlib
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -34,10 +33,14 @@ PAYWALL_MESSAGE = """
 """
 
 def get_user_id():
-    ip = st.context.headers.get("X-Forwarded-For", "local")
-    session = st.runtime.scriptrunner.get_script_run_ctx().session_id
-    raw = f"{ip}-{session}"
-    return hashlib.md5(raw.encode()).hexdigest()
+    session_id = st.session_state.get("session_id")
+
+    if not session_id:
+        import uuid
+        session_id = str(uuid.uuid4())
+        st.session_state["session_id"] = session_id
+
+    return session_id
 
 
 def get_user_usage(user_id):
