@@ -298,9 +298,20 @@ Users: **{stats['users']}**
 Total runs: **{stats['total_runs']}**
 """)
 
-# ── BLOCK ACCESS (ВАЖНО: В КОНЦЕ) ─────────
-if usage["count"] >= FREE_LIMIT:
-    st.error("❌ Бесплатный лимит исчерпан. Обратись к автору для доступа.")
+# ── BLOCK ACCESS  ─────────
+is_paid = usage.get("is_paid", False)
+
+if not is_paid and usage["count"] >= FREE_LIMIT:
+    st.error("❌ Бесплатный лимит исчерпан. Перейдите на Pro-версию для неограниченного доступа.")
+
+    st.markdown("""
+    ### 🚀 Pro доступ
+    - Безлимитный анализ
+    - AI инсайты
+    - Экспорт отчетов
+
+    👉 Напиши автору для подключения
+    """)
     st.stop()
 
 # ── UPLOAD ────────────────────────────────────────────────────────────────────
