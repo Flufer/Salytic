@@ -1,5 +1,6 @@
 import json
 import os
+import stripe
 from datetime import datetime
 import hashlib
 import streamlit as st
@@ -71,6 +72,11 @@ def increment_usage(user_id):
     data[user_id]["last_used"] = datetime.now().isoformat()
 
     save_usage(data)
+
+
+def is_user_paid(user_id):
+    data = load_usage()
+    return data.get(user_id, {}).get("is_paid", False)
 
 
 def get_usage_stats():
@@ -305,8 +311,19 @@ st.markdown("""
 
 user_id = get_user_id()
 usage = get_user_usage(user_id)
-
 remaining = max(FREE_LIMIT - usage["count"], 0)
+
+# PAYWALL
+if usage["count"] >= FREE_LIMIT and not is_user_paid(user_id):
+    st.warning("❌ Лимит исчерпан. Оформи подписку для продолжения.")
+
+    if st.button("💳 Оплатить доступ"):
+        from payments import create_checkout_session
+
+        url = create_checkout_session(user_id)
+        st.markdown(f"[Перейти к оплате]({url})", unsafe_allow_html=True)
+
+    st.stop()
 
 # ── SIDEBAR UI ─────────────────────────────
 st.sidebar.markdown(f"""
