@@ -1,7 +1,10 @@
 import os
 import stripe
 from flask import Flask, request
+from dotenv import load_dotenv
 from storage import mark_user_paid
+
+load_dotenv()
 
 app = Flask(__name__)
 
