@@ -261,7 +261,14 @@ st.markdown("""
 user_id = get_user_id()
 usage = get_user_usage(user_id)
 
-st.sidebar.info(f"Использования: {usage['count']} / {FREE_LIMIT}")
+remaining = max(FREE_LIMIT - usage["count"], 0)
+
+st.sidebar.markdown(f"""
+### 📊 Usage
+**{usage['count']} / {FREE_LIMIT}**
+
+Осталось запусков: **{remaining}**
+""")
 
 if usage["count"] >= FREE_LIMIT:
     st.error("❌ Бесплатный лимит исчерпан. Обратись к автору для доступа.")
