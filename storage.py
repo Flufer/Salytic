@@ -16,6 +16,11 @@ def save_usage(data):
         json.dump(data, f, indent=2)
 
 
+def is_user_paid(user_id):
+    data = load_usage()
+    return data.get(user_id, {}).get("is_paid", False)
+
+
 def mark_user_paid(user_id):
     data = load_usage()
 

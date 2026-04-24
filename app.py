@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 from analyzer import analyze_dataframe, detect_columns
 from llm import generate_insights
 from report import render_report
-from storage import load_usage, save_usage
+from storage import load_usage, save_usage, is_user_paid
 
 st.set_page_config(
     page_title="Salytic — AI-анализ продаж",
@@ -46,11 +46,6 @@ def get_user_id():
 def get_user_usage(user_id):
     data = load_usage()
     return data.get(user_id, {"count": 0})
-
-
-def is_user_paid(user_id):
-    data = load_usage()
-    return data.get(user_id, {}).get("is_paid", False)
 
 
 def increment_usage(user_id):
