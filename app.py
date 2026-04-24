@@ -81,6 +81,17 @@ def get_usage_stats():
         "total_runs": sum(u.get("total_runs", 0) for u in data.values())
     }
 
+
+def set_user_paid(user_id: str):
+    data = load_usage()
+
+    if user_id not in data:
+        data[user_id] = {}
+
+    data[user_id]["is_paid"] = True
+    save_usage(data)
+
+
 # CSS
 st.markdown("""
 <style>
