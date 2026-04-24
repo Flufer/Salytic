@@ -450,6 +450,12 @@ if df_raw is not None:
     if run_analysis or st.session_state.get("analysis_done"):
         if run_analysis:
             increment_usage(user_id)
+            usage = get_user_usage(user_id)
+
+            st.success(
+                f"Анализ завершён. Использований: {usage['count']}/{FREE_LIMIT}"
+            )
+
             st.session_state["analysis_done"] = True
 
         with st.spinner("Анализирую данные..."):
