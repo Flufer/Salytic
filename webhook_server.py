@@ -1,7 +1,7 @@
 import os
 import stripe
 from flask import Flask, request
-from app import load_usage, save_usage
+from storage import mark_user_paid
 
 app = Flask(__name__)
 
@@ -21,17 +21,13 @@ def stripe_webhook():
     except Exception as e:
         return {"error": str(e)}, 400
 
-    # 💳 УСПЕШНАЯ ОПЛАТА
+    # УСПЕШНАЯ ОПЛАТА
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
 
         user_id = session["metadata"]["user_id"]
 
-        data = load_usage()
-
-        if user_id in data:
-            data[user_id]["is_paid"] = True
-            save_usage(data)
+        mark_user_paid(user_id)
 
         print(f"[STRIPE] User upgraded: {user_id}")
 
