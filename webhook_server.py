@@ -1,7 +1,10 @@
 import os
 import stripe
 from flask import Flask, request
+from dotenv import load_dotenv
 from storage import mark_user_paid
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -25,7 +28,12 @@ def stripe_webhook():
     if event["type"] == "checkout.session.completed":
         session = event["data"]["object"]
 
-        user_id = session["metadata"]["user_id"]
+        metadata = session["metadata"]
+        user_id = metadata["user_id"] if "user_id" in metadata else None
+
+        if not user_id:
+            print("[STRIPE] No user_id in metadata, skipping")
+            return {"status": "ok"}, 200
 
         mark_user_paid(user_id)
 

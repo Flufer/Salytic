@@ -1,19 +1,27 @@
-import stripe
 import os
+import stripe
 
-stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 
-def create_checkout_session(user_id: str):
+def create_checkout_session(user_id):
     session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
         mode="payment",
-        line_items=[{
-            "price": os.environ.get("STRIPE_PRICE_ID"),
-            "quantity": 1,
-        }],
-        success_url="https://your-app.com/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url="https://your-app.com/cancel",
+        payment_method_types=["card"],
+        line_items=[
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": "Salytic Pro Access",
+                    },
+                    "unit_amount": 499,  # $4.99
+                },
+                "quantity": 1,
+            }
+        ],
+        success_url="http://localhost:8501/?success=true",
+        cancel_url="http://localhost:8501/?canceled=true",
         metadata={
             "user_id": user_id
         }
