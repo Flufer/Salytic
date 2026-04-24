@@ -40,6 +40,17 @@ def get_user_usage(user_id):
     data = load_usage()
     return data.get(user_id, {"count": 0})
 
+def increment_usage(user_id):
+    data = load_usage()
+
+    if user_id not in data:
+        data[user_id] = {"count": 0, "last_used": None}
+
+    data[user_id]["count"] += 1
+    data[user_id]["last_used"] = datetime.now().isoformat()
+
+    save_usage(data)
+
 
 # CSS
 st.markdown("""
@@ -255,7 +266,7 @@ st.sidebar.info(f"Использования: {usage['count']} / {FREE_LIMIT}")
 if usage["count"] >= FREE_LIMIT:
     st.error("❌ Бесплатный лимит исчерпан. Обратись к автору для доступа.")
     st.stop()
-    
+
 # ── UPLOAD ────────────────────────────────────────────────────────────────────
 col_l, col_c, col_r = st.columns([1, 2, 1])
 with col_c:
@@ -370,6 +381,7 @@ if df_raw is not None:
 
     if run_analysis or st.session_state.get("analysis_done"):
         if run_analysis:
+            increment_usage(user_id)
             st.session_state["analysis_done"] = True
 
         with st.spinner("Анализирую данные..."):
