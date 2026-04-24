@@ -10,6 +10,7 @@ import plotly.graph_objects as go
 from analyzer import analyze_dataframe, detect_columns
 from llm import generate_insights
 from report import render_report
+from storage import load_usage, save_usage
 
 st.set_page_config(
     page_title="Salytic — AI-анализ продаж",
@@ -37,18 +38,6 @@ def get_user_id():
     session = st.runtime.scriptrunner.get_script_run_ctx().session_id
     raw = f"{ip}-{session}"
     return hashlib.md5(raw.encode()).hexdigest()
-
-
-def load_usage():
-    if os.path.exists(USAGE_FILE):
-        with open(USAGE_FILE, "r") as f:
-            return json.load(f)
-    return {}
-
-
-def save_usage(data):
-    with open(USAGE_FILE, "w") as f:
-        json.dump(data, f, indent=2)
 
 
 def get_user_usage(user_id):
